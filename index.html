@@ -520,6 +520,53 @@
   </div>
 </section>
 
+<style>
+  .art-gallery {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 16px;
+    padding: 16px;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  .art-gallery figure {
+    margin: 0;
+  }
+  .art-gallery img {
+    width: 100%;
+    height: auto;
+    display: block;
+    border-radius: 4px;
+  }
+  .art-gallery figcaption {
+    font-size: 0.9rem;
+    margin-top: 6px;
+    color: #555;
+  }
+</style>
+
+<div class="art-gallery">
+  <figure>
+    <a href="punkin.png" target="_blank">
+      <img src="punkin.png" alt="ALT TEXT" loading="lazy">
+    </a>
+    <figcaption>(OLD) COMIC PANEL</figcaption>
+  </figure>
+
+  <figure>
+    <a href="Mote Poster 2.0.jpg" target="_blank">
+      <img src="Mote Poster 2.0.jpg" alt="ALT TEXT" loading="lazy">
+    </a>
+    <figcaption>(NEW) MOTE FROM PSYCHOPUNK: GIRLBOSS GODHEAD</figcaption>
+  </figure>
+
+  <figure>
+    <a href="I1P3.png" target="_blank">
+      <img src="I1P3.png" alt="ALT TEXT" loading="lazy">
+    </a>
+    <figcaption>(OLD) COMIC COLORING</figcaption>
+  </figure>
+</div>
 <!-- ── ABOUT ── -->
 <section id="about">
   <div class="section-label">About</div>
