@@ -3,377 +3,798 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#0b2029">
 <title>Fear & Wonder | Talon Vale</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,200..800&family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,100..900,0..100,0..1;1,9..144,100..900,0..100,0..1&display=swap" rel="stylesheet">
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Outfit:wght@300;400;500&display=swap');
-
-  :root {
-    --ink: #1a1a1a;
-    --paper: #f6f4f0;
-    --warm-mid: #8c8279;
-    --accent: #4a3f35;
-    --faint: #e8e4de;
-    --highlight: #c9a96e;
+  /* ════════════════════════════════════════════
+     TOKENS
+     ════════════════════════════════════════════ */
+  @property --spin {
+    syntax: '<angle>';
+    inherits: false;
+    initial-value: 0deg;
   }
 
-  * { margin: 0; padding: 0; box-sizing: border-box; }
+  :root {
+    --trench:   #0b2029;   /* page ground */
+    --mantle:   #11303a;   /* raised surfaces */
+    --bone:     #e9f2ec;   /* primary text */
+    --bone-dim: #c4d6cf;   /* body copy */
+    --silt:     #9fbab3;   /* secondary text */
+    --hairline: rgba(159, 186, 179, 0.16);
 
-  html { scroll-behavior: smooth; }
+    --lumen:  #5df5d4;     /* bioluminescent cyan */
+    --violet: #9a86ff;
+    --medusa: #ff7ac6;     /* jellyfish pink */
+    --amber:  #f5c96a;
+
+    --prisma-stops: var(--lumen), var(--violet), var(--medusa), var(--amber), var(--lumen);
+    --prisma-line: linear-gradient(90deg, var(--lumen), var(--violet) 35%, var(--medusa) 70%, var(--amber));
+
+    --serif: 'Fraunces', Georgia, serif;
+    --sans: 'Bricolage Grotesque', system-ui, sans-serif;
+
+    --gutter: clamp(1rem, 4vw, 2.5rem);
+    --cell: 28px 10px 28px 10px;   /* asymmetric "cell wall" corner */
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  html:has(.viewer[open]) { overflow: hidden; }
 
   body {
-    font-family: 'Cormorant Garamond', Georgia, serif;
-    background: var(--paper);
-    color: var(--ink);
-    line-height: 1.7;
+    font-family: var(--serif);
+    font-optical-sizing: auto;
+    font-weight: 380;
+    font-size: 1.0625rem;
+    line-height: 1.75;
+    color: var(--bone);
+    background: var(--trench);
+    overflow-x: clip;
     -webkit-font-smoothing: antialiased;
   }
 
-  /* ── NAV ── */
-  nav {
+  img { display: block; max-width: 100%; }
+  a { color: inherit; }
+
+  :focus-visible {
+    outline: 2px solid var(--lumen);
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
+
+  ::selection { background: var(--medusa); color: var(--trench); }
+
+  /* ════════════════════════════════════════════
+     DEEP-SEA BACKGROUND
+     ════════════════════════════════════════════ */
+  .sea {
     position: fixed;
-    top: 0;
-    width: 100%;
-    z-index: 100;
-    background: var(--paper);
-    border-bottom: 1px solid var(--faint);
-    padding: 1rem 2rem;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-
-  nav .brand {
-    font-family: 'Outfit', sans-serif;
-    font-weight: 500;
-    font-size: 0.75rem;
-    letter-spacing: 0.3em;
-    text-transform: uppercase;
-    color: var(--accent);
-  }
-
-  nav .links {
-    display: flex;
-    gap: 2rem;
-  }
-
-  nav .links a {
-    font-family: 'Outfit', sans-serif;
-    font-size: 0.7rem;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    text-decoration: none;
-    color: var(--warm-mid);
-    transition: color 0.3s;
-  }
-
-  nav .links a:hover { color: var(--ink); }
-
-  /* ── HERO ── */
-  .hero {
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 6rem 2rem 4rem;
-  }
-
-  .hero-inner {
-    max-width: 1100px;
-    width: 100%;
-    display: grid;
-    grid-template-columns: 1.2fr 1fr;
-    gap: 4rem;
-    align-items: center;
-  }
-
-  .hero-image {
-    position: relative;
-    aspect-ratio: 4 / 3;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
     overflow: hidden;
-    background: var(--faint);
-    box-shadow:
-      0 1px 3px rgba(0,0,0,0.08),
-      0 20px 60px -20px rgba(74, 63, 53, 0.35);
+    background:
+      radial-gradient(55vmax 45vmax at 8% 0%, rgba(93, 245, 212, 0.16), transparent 62%),
+      radial-gradient(45vmax 50vmax at 100% 30%, rgba(255, 122, 198, 0.13), transparent 60%),
+      radial-gradient(60vmax 45vmax at 40% 110%, rgba(154, 134, 255, 0.20), transparent 65%),
+      var(--trench);
   }
 
-  .hero-image img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
-    filter: saturate(0.92) contrast(1.02);
-  }
-
-  .hero-image::after {
+  /* film grain */
+  .sea::before {
     content: '';
     position: absolute;
     inset: 0;
-    box-shadow: inset 0 0 80px rgba(74, 63, 53, 0.08);
-    pointer-events: none;
+    opacity: 0.09;
+    mix-blend-mode: overlay;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .6 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   }
 
-  .hero-text {
-    text-align: left;
+  /* drifting bioluminescent motes */
+  .sea::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    opacity: 0.55;
+    background-image:
+      radial-gradient(circle at center, rgba(93, 245, 212, 0.85) 0 1.4px, rgba(93, 245, 212, 0) 3px),
+      radial-gradient(circle at center, rgba(255, 122, 198, 0.7) 0 1.2px, rgba(255, 122, 198, 0) 2.6px),
+      radial-gradient(circle at center, rgba(245, 201, 106, 0.6) 0 1px, rgba(245, 201, 106, 0) 2.2px);
+    background-size: 420px 420px, 630px 630px, 300px 300px;
+    background-position: 0 0, 140px 90px, 60px 210px;
+    animation: drift 70s linear infinite;
+  }
+
+  @keyframes drift {
+    to { background-position: 0 -420px, 140px -540px, 60px -90px; }
+  }
+
+  /* ════════════════════════════════════════════
+     NAV
+     ════════════════════════════════════════════ */
+  .topbar {
+    position: fixed;
+    inset: 0 0 auto 0;
+    z-index: 50;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.85rem var(--gutter);
+    background: rgba(11, 32, 41, 0.62);
+    -webkit-backdrop-filter: blur(14px) saturate(140%);
+    backdrop-filter: blur(14px) saturate(140%);
+    border-bottom: 1px solid var(--hairline);
+  }
+
+  .brand {
+    font-family: var(--serif);
+    font-size: 1.15rem;
+    font-weight: 480;
+    font-variation-settings: "SOFT" 100;
+    text-decoration: none;
+    color: var(--bone);
+    white-space: nowrap;
+  }
+
+  .links {
+    display: flex;
+    gap: clamp(1rem, 2.5vw, 2rem);
+  }
+
+  .links a {
+    font-family: var(--sans);
+    font-size: 0.95rem;
+    font-weight: 500;
+    text-decoration: none;
+    color: var(--silt);
+    padding: 0.3rem 0;
+    transition: color 0.25s;
+  }
+
+  .links a:hover { color: var(--lumen); }
+
+  /* ════════════════════════════════════════════
+     HERO
+     ════════════════════════════════════════════ */
+  .hero {
+    min-height: 100vh;
+    min-height: 100svh;
+    display: grid;
+    place-items: center;
+    padding: 7.5rem var(--gutter) 5rem;
+  }
+
+  .hero-inner {
+    width: 100%;
+    max-width: 1180px;
+    display: grid;
+    grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr);
+    gap: clamp(3rem, 7vw, 6rem);
+    align-items: center;
+  }
+
+  /* portrait inside a breathing, iridescent membrane */
+  .organism {
+    position: relative;
+    width: min(100%, 470px);
+    aspect-ratio: 1;
+    justify-self: center;
+    animation: emerge 1.4s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  }
+
+  .organism-glow {
+    position: absolute;
+    inset: -9%;
+    background: conic-gradient(from var(--spin), var(--prisma-stops));
+    filter: blur(46px);
+    opacity: 0.5;
+    animation: morph 17s ease-in-out infinite, spin 22s linear infinite;
+  }
+
+  .organism-rim {
+    --inset: 5px;
+    position: relative;
+    height: 100%;
+    padding: 5px;
+    border-radius: 58% 42% 46% 54% / 47% 55% 45% 53%;
+    background: conic-gradient(from var(--spin), var(--prisma-stops));
+    animation: morph 17s ease-in-out infinite, spin 22s linear infinite;
+  }
+
+  .organism-rim img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    border-radius: inherit;
+    background: var(--mantle);
+  }
+
+  .spore {
+    position: absolute;
+    width: 10px;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    background: var(--lumen);
+    box-shadow: 0 0 14px 4px rgba(93, 245, 212, 0.55);
+    animation: bob 7s ease-in-out infinite;
+  }
+
+  .spore:nth-of-type(1) { top: 6%; right: 6%; }
+  .spore:nth-of-type(2) {
+    bottom: 12%; left: -1%;
+    width: 8px;
+    background: var(--medusa);
+    box-shadow: 0 0 14px 4px rgba(255, 122, 198, 0.5);
+    animation-delay: -2.5s;
+  }
+  .spore:nth-of-type(3) {
+    top: 48%; right: -4%;
+    width: 6px;
+    background: var(--amber);
+    box-shadow: 0 0 12px 3px rgba(245, 201, 106, 0.5);
+    animation-delay: -4.5s;
   }
 
   .hero h1 {
-    font-size: clamp(2.8rem, 6vw, 4.5rem);
-    font-weight: 300;
-    letter-spacing: 0.04em;
-    line-height: 1.15;
-    margin-bottom: 0.4em;
-    color: var(--ink);
+    font-family: var(--serif);
+    font-size: clamp(3.4rem, 9.5vw, 7.6rem);
+    font-weight: 340;
+    line-height: 0.92;
+    letter-spacing: -0.02em;
+    font-variation-settings: "SOFT" 100, "WONK" 1;
+    text-shadow: 0 0 40px rgba(93, 245, 212, 0.22);
+    margin-bottom: 1.4rem;
+    animation: emerge 1.1s 0.25s cubic-bezier(0.2, 0.7, 0.2, 1) both;
   }
 
   .hero h1 em {
     font-style: italic;
     font-weight: 300;
-    color: var(--accent);
   }
 
   .hero .tagline {
-    font-family: 'Outfit', sans-serif;
-    font-size: 0.75rem;
-    font-weight: 400;
-    letter-spacing: 0.25em;
-    text-transform: uppercase;
-    color: var(--warm-mid);
-    margin-bottom: 2.5rem;
+    font-family: var(--sans);
+    font-size: 1rem;
+    font-weight: 550;
+    font-variation-settings: "wdth" 90;
+    letter-spacing: 0.02em;
+    color: var(--lumen);
+    animation: emerge 1s 0.45s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  }
+
+  .hero .divider {
+    width: 72px;
+    height: 3px;
+    border-radius: 3px;
+    background: var(--prisma-line);
+    margin: 1.75rem 0;
+    animation: emerge 1s 0.55s cubic-bezier(0.2, 0.7, 0.2, 1) both;
   }
 
   .hero .intro {
-    font-size: 1.15rem;
-    font-weight: 300;
-    color: var(--accent);
-    line-height: 1.8;
+    font-size: 1.12rem;
+    color: var(--bone-dim);
+    max-width: 34em;
     margin-bottom: 1rem;
+    animation: emerge 1s 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) both;
   }
 
-  .hero .intro:last-child {
+  .hero .intro:last-child { margin-bottom: 0; }
+
+  /* ════════════════════════════════════════════
+     SECTIONS
+     ════════════════════════════════════════════ */
+  .band {
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: clamp(4rem, 9vw, 7rem) var(--gutter);
+    scroll-margin-top: 4.5rem;
+  }
+
+  .band + .band { border-top: 1px solid var(--hairline); }
+
+  .section-label {
+    font-family: var(--serif);
+    font-size: clamp(2.2rem, 4.4vw, 3.4rem);
+    font-weight: 360;
+    line-height: 1;
+    letter-spacing: -0.015em;
+    font-variation-settings: "SOFT" 100;
+    margin-bottom: 2.5rem;
+  }
+
+  .section-label::after {
+    content: '';
+    display: block;
+    width: 56px;
+    height: 3px;
+    border-radius: 3px;
+    background: var(--prisma-line);
+    margin-top: 1.1rem;
+  }
+
+  /* heading column + content column */
+  .split {
+    display: grid;
+    grid-template-columns: minmax(0, 17rem) minmax(0, 1fr);
+    column-gap: clamp(2.5rem, 6vw, 5.5rem);
+    align-items: start;
+  }
+
+  .split > .section-label {
+    position: sticky;
+    top: 6.5rem;
     margin-bottom: 0;
   }
 
-  .divider {
-    width: 40px;
-    height: 1px;
-    background: var(--highlight);
-    margin: 2rem 0;
+  /* ════════════════════════════════════════════
+     ART
+     ════════════════════════════════════════════ */
+  .gallery {
+    columns: 3 260px;
+    column-gap: 1.25rem;
   }
 
-  .hero-text .divider {
-    margin: 2rem 0;
+  .piece {
+    break-inside: avoid;
+    margin-bottom: 1.6rem;
   }
 
-  /* center the divider when it appears elsewhere */
-  section .divider,
-  .contact-section .divider {
-    margin: 3rem auto;
+  .tile {
+    position: relative;
+    display: block;
+    overflow: hidden;
+    border-radius: var(--cell);
+    background: var(--mantle);
+    box-shadow: 0 18px 40px -24px rgba(0, 0, 0, 0.65);
+    isolation: isolate;
   }
 
-  /* ── SECTIONS ── */
-  section {
-    padding: 5rem 2rem;
-    max-width: 760px;
-    margin: 0 auto;
+  .tile img {
+    width: 100%;
+    height: auto;
+    transition: transform 0.6s cubic-bezier(0.2, 0.7, 0.2, 1);
   }
 
-  .section-label {
-    font-family: 'Outfit', sans-serif;
-    font-size: 0.65rem;
-    font-weight: 500;
-    letter-spacing: 0.35em;
-    text-transform: uppercase;
-    color: var(--highlight);
-    margin-bottom: 2rem;
+  /* resting hairline */
+  .tile::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    border-radius: inherit;
+    border: 1px solid rgba(93, 245, 212, 0.16);
+    pointer-events: none;
   }
 
-  /* ── BIO ── */
-  .bio p {
-    font-size: 1.15rem;
-    font-weight: 300;
-    margin-bottom: 1.5rem;
-    color: var(--ink);
+  /* iridescent rim on hover / keyboard focus */
+  .tile::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    border-radius: inherit;
+    padding: 2px;
+    background: var(--prisma-line);
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    opacity: 0;
+    transition: opacity 0.35s;
+    pointer-events: none;
   }
 
-  .bio .credentials {
-    margin-top: 2.5rem;
-    padding-top: 2rem;
-    border-top: 1px solid var(--faint);
+  .tile:hover::after,
+  .tile:focus-visible::after { opacity: 1; }
+
+  .tile:hover img,
+  .tile:focus-visible img { transform: scale(1.03); }
+
+  .tile:focus-visible { outline-offset: 4px; }
+
+  .piece figcaption {
+    font-family: var(--sans);
+    font-size: 0.9rem;
+    font-weight: 450;
+    line-height: 1.45;
+    color: var(--silt);
+    margin-top: 0.7rem;
+    padding-left: 0.25rem;
   }
 
-  .credentials-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1.5rem 3rem;
+  /* ════════════════════════════════════════════
+     WORK
+     ════════════════════════════════════════════ */
+  .entry {
+    padding: 2.25rem 0;
+    border-top: 1px solid var(--hairline);
   }
 
-  .credential-item .label {
-    font-family: 'Outfit', sans-serif;
-    font-size: 0.65rem;
-    font-weight: 500;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    color: var(--warm-mid);
-    margin-bottom: 0.3rem;
+  .entry:first-child {
+    padding-top: 0;
+    border-top: 0;
   }
 
-  .credential-item .value {
-    font-size: 1.05rem;
-    font-weight: 400;
-    color: var(--ink);
-  }
-
-  /* ── WORK ── */
-  .work-item {
-    margin-bottom: 2.5rem;
-    padding-bottom: 2.5rem;
-    border-bottom: 1px solid var(--faint);
-  }
-
-  .work-item:last-child {
-    border-bottom: none;
-  }
-
-  .work-item h3 {
-    font-size: 1.4rem;
-    font-weight: 400;
+  .entry h3 {
+    font-family: var(--serif);
+    font-size: clamp(1.65rem, 2.8vw, 2.25rem);
     font-style: italic;
-    margin-bottom: 0.3rem;
+    font-weight: 400;
+    line-height: 1.12;
+    font-variation-settings: "SOFT" 100, "WONK" 1;
+    margin-bottom: 0.55rem;
   }
 
-  .work-item .genre {
-    font-family: 'Outfit', sans-serif;
-    font-size: 0.65rem;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    color: var(--warm-mid);
-    margin-bottom: 0.8rem;
+  .entry .series {
+    display: block;
+    font-family: var(--sans);
+    font-size: 0.95rem;
+    font-style: normal;
+    font-weight: 650;
+    letter-spacing: 0.01em;
+    color: var(--lumen);
+    margin-bottom: 0.4rem;
   }
 
- .work-item p {
-  font-size: 1.05rem;
-  font-weight: 300;
-  color: var(--accent);
-  margin-bottom: 1.25rem;
-}
-.work-item p:last-child {
-  margin-bottom: 0; 
-}
-  /* ── TESTIMONIALS ── */
+  .entry .genre {
+    font-family: var(--sans);
+    font-size: 0.93rem;
+    font-weight: 500;
+    color: var(--medusa);
+    margin-bottom: 1.1rem;
+  }
+
+  .entry p {
+    color: var(--bone-dim);
+    max-width: 66ch;
+    margin-bottom: 1.15rem;
+  }
+
+  .entry p:last-child { margin-bottom: 0; }
+
+  /* Psychopunk entries */
+  .entry.featured {
+    position: relative;
+    padding: clamp(1.75rem, 3vw, 2.5rem);
+    margin-bottom: 1.5rem;
+    border-top: 0;
+    border-radius: var(--cell);
+    background:
+      linear-gradient(150deg, rgba(93, 245, 212, 0.09), rgba(154, 134, 255, 0.07) 45%, rgba(255, 122, 198, 0.08)),
+      rgba(17, 48, 58, 0.55);
+    box-shadow: 0 30px 70px -45px rgba(93, 245, 212, 0.5);
+  }
+
+  .entry.featured::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1.5px;
+    background: var(--prisma-line);
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+  }
+
+  .entry.featured + .entry:not(.featured) { border-top: 0; }
+
+  /* ════════════════════════════════════════════
+     ABOUT
+     ════════════════════════════════════════════ */
+  .bio p {
+    font-size: 1.12rem;
+    max-width: 64ch;
+    margin-bottom: 1.4rem;
+  }
+
+  .credentials {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.75rem 3rem;
+    margin-top: 2.75rem;
+    padding-top: 2.25rem;
+    border-top: 1px solid var(--hairline);
+  }
+
+  .credential dt {
+    font-family: var(--sans);
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--lumen);
+    margin-bottom: 0.25rem;
+  }
+
+  .credential dd {
+    font-size: 1.05rem;
+    line-height: 1.5;
+  }
+
+  /* ════════════════════════════════════════════
+     PRAISE
+     ════════════════════════════════════════════ */
+  .praise-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 2.75rem 3rem;
+    align-items: start;
+  }
+
   .testimonial {
-    margin-bottom: 3rem;
+    position: relative;
     padding-left: 1.5rem;
-    border-left: 2px solid var(--highlight);
+  }
+
+  .testimonial::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0.35rem;
+    bottom: 0.35rem;
+    width: 2px;
+    border-radius: 2px;
+    background: linear-gradient(180deg, var(--lumen), var(--violet), var(--medusa));
   }
 
   .testimonial blockquote {
-    font-size: 1.1rem;
-    font-weight: 300;
+    font-size: 1.14rem;
     font-style: italic;
-    color: var(--ink);
-    margin-bottom: 0.8rem;
-    line-height: 1.8;
+    line-height: 1.7;
+    font-variation-settings: "SOFT" 100, "WONK" 1;
+    margin-bottom: 1rem;
   }
 
   .testimonial .attribution {
-    font-family: 'Outfit', sans-serif;
-    font-size: 0.7rem;
-    font-weight: 400;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    color: var(--warm-mid);
+    font-family: var(--sans);
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--silt);
   }
 
-  /* ── CONTACT ── */
-  .contact-section {
-    text-align: center;
-    padding: 5rem 2rem 6rem;
-    max-width: 760px;
-    margin: 0 auto;
-  }
+  /* ════════════════════════════════════════════
+     CONTACT
+     ════════════════════════════════════════════ */
+  .contact { text-align: center; }
 
-  .contact-section p {
-    font-size: 1.15rem;
-    font-weight: 300;
-    color: var(--accent);
-    margin-bottom: 2rem;
+  .contact .section-label::after { margin-inline: auto; }
+
+  .contact p {
+    font-size: 1.12rem;
+    color: var(--bone-dim);
+    margin-bottom: 1.75rem;
   }
 
   .contact-link {
-    font-family: 'Outfit', sans-serif;
-    font-size: 0.75rem;
-    font-weight: 500;
-    letter-spacing: 0.25em;
-    text-transform: uppercase;
+    font-family: var(--serif);
+    font-size: clamp(1.35rem, 4.6vw, 2.75rem);
+    font-weight: 380;
+    font-variation-settings: "SOFT" 100;
     text-decoration: none;
-    color: var(--ink);
-    border-bottom: 1px solid var(--highlight);
-    padding-bottom: 4px;
-    transition: all 0.3s;
+    padding: 0 0.15em 0.15em;
+    background: var(--prisma-line) left bottom / 100% 2px no-repeat;
+    overflow-wrap: anywhere;
+    transition: background-size 0.35s, color 0.35s;
   }
 
   .contact-link:hover {
-    color: var(--highlight);
+    background-size: 100% 100%;
+    color: var(--trench);
   }
 
-  /* ── FOOTER ── */
-  footer {
+  /* ════════════════════════════════════════════
+     FOOTER
+     ════════════════════════════════════════════ */
+  .site-footer {
     text-align: center;
-    padding: 2rem;
-    border-top: 1px solid var(--faint);
+    padding: 2rem var(--gutter) 2.5rem;
+    border-top: 1px solid var(--hairline);
+    font-family: var(--sans);
+    font-size: 0.85rem;
+    color: var(--silt);
   }
 
-  footer p {
-    font-family: 'Outfit', sans-serif;
-    font-size: 0.6rem;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    color: var(--warm-mid);
+  /* ════════════════════════════════════════════
+     IMAGE VIEWER
+     ════════════════════════════════════════════ */
+  .viewer {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    max-width: none;
+    max-height: none;
+    margin: 0;
+    padding: clamp(1rem, 4vw, 3rem);
+    border: 0;
+    background: transparent;
+    color: var(--bone);
   }
 
-  /* ── RESPONSIVE ── */
-  @media (max-width: 860px) {
+  .viewer[open] {
+    display: grid;
+    place-items: center;
+  }
+
+  .viewer::backdrop {
+    background: rgba(5, 18, 24, 0.9);
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+  }
+
+  .viewer figure {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.9rem;
+    max-width: 100%;
+    animation: emerge 0.35s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  }
+
+  .viewer img {
+    width: auto;
+    height: auto;
+    max-width: min(90vw, 1400px);
+    max-height: 78vh;
+    object-fit: contain;
+    border-radius: 14px;
+    box-shadow: 0 0 0 1px var(--hairline), 0 30px 80px -30px rgba(93, 245, 212, 0.35);
+  }
+
+  .viewer figcaption {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.4rem 1rem;
+    font-family: var(--sans);
+    font-size: 0.95rem;
+    color: var(--bone-dim);
+    text-align: center;
+  }
+
+  .viewer-count { color: var(--lumen); }
+
+  .viewer-btn {
+    position: fixed;
+    display: grid;
+    place-items: center;
+    width: 3rem;
+    height: 3rem;
+    border-radius: 50%;
+    border: 1px solid var(--hairline);
+    background: rgba(17, 48, 58, 0.85);
+    color: var(--bone);
+    font: 400 1.6rem/1 var(--sans);
+    cursor: pointer;
+    transition: border-color 0.2s, color 0.2s;
+  }
+
+  .viewer-btn:hover {
+    border-color: var(--lumen);
+    color: var(--lumen);
+  }
+
+  .viewer-close { top: 1rem; right: 1rem; }
+  .viewer-prev  { left: 1rem;  top: 50%; transform: translateY(-50%); }
+  .viewer-next  { right: 1rem; top: 50%; transform: translateY(-50%); }
+
+  /* ════════════════════════════════════════════
+     MISSING-IMAGE PLACEHOLDER
+     (shows the file name if a src is wrong)
+     ════════════════════════════════════════════ */
+  .tile.img-missing { min-height: 240px; }
+
+  [data-frame].img-missing img { visibility: hidden; }
+  .tile.img-missing img { display: none; }
+
+  [data-frame].img-missing::before {
+    content: "Image not found: " attr(data-missing);
+    position: absolute;
+    inset: var(--inset, 0);
+    z-index: 1;
+    display: grid;
+    place-items: center;
+    padding: 1.5rem;
+    border-radius: inherit;
+    background:
+      radial-gradient(circle at 30% 30%, rgba(93, 245, 212, 0.12), transparent 60%),
+      radial-gradient(circle at 75% 70%, rgba(255, 122, 198, 0.10), transparent 55%),
+      var(--mantle);
+    font: 500 0.85rem/1.4 var(--sans);
+    color: var(--silt);
+    text-align: center;
+    overflow-wrap: anywhere;
+  }
+
+  /* ════════════════════════════════════════════
+     MOTION
+     ════════════════════════════════════════════ */
+  @keyframes emerge {
+    from { opacity: 0; transform: translateY(18px) scale(0.98); filter: blur(6px); }
+    to   { opacity: 1; transform: none; filter: none; }
+  }
+
+  @keyframes morph {
+    0%, 100% { border-radius: 58% 42% 46% 54% / 47% 55% 45% 53%; }
+    33%      { border-radius: 44% 56% 62% 38% / 56% 41% 59% 44%; }
+    66%      { border-radius: 52% 48% 38% 62% / 42% 60% 40% 58%; }
+  }
+
+  @keyframes spin { to { --spin: 360deg; } }
+
+  @keyframes bob {
+    0%, 100% { transform: translate(0, 0); opacity: 0.9; }
+    50%      { transform: translate(4px, -10px); opacity: 0.55; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    *, *::before, *::after {
+      animation: none !important;
+      transition: none !important;
+    }
+  }
+
+  /* ════════════════════════════════════════════
+     RESPONSIVE
+     ════════════════════════════════════════════ */
+  @media (max-width: 900px) {
     .hero-inner {
       grid-template-columns: 1fr;
-      gap: 2.5rem;
-      max-width: 560px;
+      max-width: 620px;
     }
-    .hero-image {
-      aspect-ratio: 4 / 3;
-    }
-    .hero-text {
-      text-align: center;
-    }
-    .hero-text .divider {
-      margin: 2rem auto;
+    .organism { width: min(78vw, 360px); }
+
+    .split { grid-template-columns: 1fr; }
+    .split > .section-label {
+      position: static;
+      margin-bottom: 2.5rem;
     }
   }
 
-  @media (max-width: 600px) {
-    .credentials-grid {
-      grid-template-columns: 1fr;
+  @media (max-width: 700px) {
+    .praise-grid,
+    .credentials { grid-template-columns: 1fr; }
+  }
+
+  @media (max-width: 640px) {
+    .topbar {
+      flex-direction: column;
+      gap: 0.3rem;
+      padding-block: 0.6rem;
     }
-    nav .links { gap: 1.2rem; }
-    section { padding: 3.5rem 1.5rem; }
-  }
+    .links { gap: 1.15rem; }
+    .hero { padding-top: 8.5rem; }
+    .band { scroll-margin-top: 6rem; }
 
-  /* ── SUBTLE ANIMATIONS ── */
-  @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
+    .viewer-prev,
+    .viewer-next {
+      top: auto;
+      bottom: 1rem;
+      transform: none;
+    }
   }
-
-  .hero-image { animation: fadeUp 1.2s ease-out 0.1s both; }
-  .hero h1 { animation: fadeUp 1s ease-out 0.3s both; }
-  .hero .tagline { animation: fadeUp 1s ease-out 0.6s both; }
-  .hero .intro { animation: fadeUp 1s ease-out 0.9s both; }
 </style>
 </head>
 <body>
 
-<nav>
-  <div class="brand">Fear &amp; Wonder</div>
+<div class="sea" aria-hidden="true"></div>
+
+<nav class="topbar">
+  <a class="brand" href="#top">Fear &amp; Wonder</a>
   <div class="links">
+    <a href="#art">Art</a>
     <a href="#work">Work</a>
     <a href="#about">About</a>
     <a href="#praise">Praise</a>
@@ -382,332 +803,388 @@
 </nav>
 
 <!-- ── HERO ── -->
-<div class="hero">
+<header class="hero" id="top">
   <div class="hero-inner">
-    <div class="hero-image">
-      <img src="blair-portrait.jpg" alt="Talon Vale">
+    <div class="organism">
+      <div class="organism-glow" aria-hidden="true"></div>
+      <div class="organism-rim" data-frame>
+        <img src="blair-portrait.jpg" alt="Talon Vale" fetchpriority="high">
+      </div>
+      <span class="spore" aria-hidden="true"></span>
+      <span class="spore" aria-hidden="true"></span>
+      <span class="spore" aria-hidden="true"></span>
     </div>
     <div class="hero-text">
       <h1>Talon <em>Vale</em></h1>
       <div class="tagline">Fiction &bull; Essays &bull; Editing</div>
       <div class="divider"></div>
       <p class="intro">
-        An author born and raised in a small town in the Sierra Nevada 
+        An author born and raised in a small town in the Sierra Nevada
         mountains, in a home built by an artist father and a carpenter mother.
       </p>
       <p class="intro">
-        As moved by Jim Henson's puppetry as she is by the works of 
+        As moved by Jim Henson's puppetry as she is by the works of
         Gabriel Garc&iacute;a M&aacute;rquez.
       </p>
       <p class="intro">
-        Accused of being a poet disguised as a novelist by Patricia Smith 
+        Accused of being a poet disguised as a novelist by Patricia Smith
         during a thesis defense.
       </p>
     </div>
   </div>
-</div>
+</header>
 
-<!-- ── WORK ── -->
-<section id="work">
-  <div class="section-label">Current Work</div>
+<main>
 
-  <div class="work-item">
-    <h3>Moonblood</h3>
-    <div class="genre">Upmarket Fiction &bull; Novel</div>
-    <p>
-      Olive Tarkanian is twenty, broke, and living in a rotting Fresno apartment 
-      when her mother, Mabel, calls and says come home. Mabel is a force that bends 
-      the world around her — brilliant, brutal, tender in flashes that make the cruelty 
-      worse. When Olive tells her about the woman who groomed her online since she was 
-      twelve, Mabel doesn't call a lawyer. She packs a bag, calls in favors from people 
-      who owe her, and drives her daughter cross-country to settle it her way. What follows 
-      strips both of them to the root — past the rage, past the protection that became its 
-      own kind of violence, to a shared wound neither of them knows how to name. 
-      <em>Moonblood</em> is about what lives between a mother and daughter when love and 
-      violence share the same body.
-    </p>
-  </div>
+<!-- ── ART ── -->
+<!-- To add a piece: copy one <figure> block. File names with spaces use %20. -->
+<section class="band" id="art">
+  <h2 class="section-label">Art</h2>
 
-  <div class="work-item">
-    <h3>Psychopunk: The Jellyfish Exorcist</h3>
-    <div class="genre">Speculative Fiction &bull; Novel</div>
-    <p>
-      Noviko Tanaka-LaCroix is a psychopunk — a wetware-assisted healer who dives into 
-      the subconscious to clear out whatever's gone rotten. When a catatonic old man with 
-      a bucket of live jellyfish and no language anyone can translate is dropped at her door 
-      by a corporate agent, the job looks routine. It isn't. His mind is a centuries-deep 
-      wound, his suffering is being maintained on purpose, and the corporations that run 
-      Noviko's oceanic world can't agree on whether he should be healed or kept broken. 
-      Now she's neck-deep in something much bigger than an exorcism, with her family at 
-      stake and her sanity being spent like currency.
-    </p>
-  </div>
+  <div class="gallery">
+    <figure class="piece">
+      <a class="tile" href="punkin.png" target="_blank" data-frame>
+        <img src="punkin.png" alt="ALT TEXT" loading="lazy">
+      </a>
+      <figcaption>(OLD) COMIC PANEL</figcaption>
+    </figure>
 
-    <div class="work-item">
-    <h3>Psychopunk: The Girlboss Godhead</h3>
-    <div class="genre">Speculative Fiction &bull; Novel</div>
-    <p>
-      Three hundred years after the solar flare that destroyed the tech empire of the
-      broligarchs, their freed slaves thrive in an anarchic, oceanic syndicate. All connect
-      through the wetware of a benevolent, chimeric entity masquerading as a corporation: PRISMA. 
-      Envy, a genetically-engineered, centuries-old tablet kid turned bioweapon commando,
-      can't remember most of her life. As a living weapon and citizen of Syndicate, she is
-      voluntold to investigate potential eco-crime in the Pacific Northwest, her birthplace.
-      What she finds is a hungry, mind-enslaving plague with a grudge against her people.
-      Only with the help of a rogues' gallery of absurd characters will she survive in one
-      piece (or any number of pieces).
-    </p>
-  </div>
-  
-  <div class="work-item">
-    <h3>Jingle Bell and Too Much Christmas</h3>
-    <div class="genre">Children's Picture Book</div>
-    <p>
-      Jingle Bell runs Winter Wonderland with absolute sincerity and a smile that could 
-      power a city grid. She loves Christmas so much she wants it every day — and when 
-      spooky old Halloween won't get out of the way, Bell bulldozes right through. What 
-      follows is a consumerist apocalypse in rhyming verse: children buried under toys, 
-      parents worked to the bone to afford the gifts, grabby little opportunists, and a 
-      world bleached by mandatory joy. A picture book about what happens when generosity 
-      has no off switch, illustrated in the vein of DiTerlizzi and Froud, for kids who 
-      can handle the dark and adults who've forgotten they need it.
-    </p>
-  </div>
-  
-<div class="work-item">
-    <h3>Feast of the Virgin Eagle</h3>
-    <div class="genre">Reconstruction-era Dark Fantasy - WIP, 100k+ words</div>
-    <p>
-    "If you write it, a curse on anyone who reads it." A warning ignored by Jeremy
-    Jordan, author of the collected diaries and transcribed interviews with his own
-    hellbound, adoptive mother. Sidney Jordan, murderer, outlaw, fallen woman passing
-    often as a man in her travels, has her 1870's adventures in America documented 
-    by a son who, through the process of writing this book, opens up questions about
-    his own origins, and where his mother found him as a baby in the first place.
-    </p>
-  
-    <p>
-    A death and a discovery lead to Sidney Jordan seeking Alva, her mother, across
-    the United States in a bid for answers -- while Alva sends Pinkertons, Templars,
-    and even an assassin-turned-friend to make attempts on Sidney's life. Along the 
-    way, Sidney comes to face her true inheritance -- not silver, but hunger. This
-    hunger, for righteous bloodshed, the suffering of men she deems evil, for any
-    perceived justice, is her road to Hell. 
-    </p>
+    <figure class="piece">
+      <a class="tile" href="Mote%20Poster%202.0.jpg" target="_blank" data-frame>
+        <img src="Mote%20Poster%202.0.jpg" alt="ALT TEXT" loading="lazy">
+      </a>
+      <figcaption>(NEW) MOTE FROM PSYCHOPUNK: GIRLBOSS GODHEAD</figcaption>
+    </figure>
 
-    <p> 
-    The friends she makes along the way are Jeremiah Cain, legend of the Civil War 
-    and killer of white slavers, and Lovey Sluder, an Appalachian-Cherokee bard who 
-    sings to guard god's secrets. Together, they brave adventures across the Americas,
-    from New York to Memphis, Cape Horn and Los Angeles, San Francisco and at last,
-    Virginia City, the violent heart of Alva's empire of bloody silver.
-    </p>
+    <figure class="piece">
+      <a class="tile" href="I1P3.png" target="_blank" data-frame>
+        <img src="I1P3.png" alt="ALT TEXT" loading="lazy">
+      </a>
+      <figcaption>(VERY OLD) COMIC COLORING</figcaption>
+    </figure>
 
-    <p>
-    What awaits them there is a promised feast, a great spoiling of their spirits,
-    a banquet laid out to rival the excesses of the old gods. In this tale, the 
-    question of who eats, and who is eaten, is asked of the 19th century and beyond.
-    </p>
-  </div>
-  
-  <div class="work-item">
-    <h3>Editing &amp; Development</h3>
-    <div class="genre">Editorial Services</div>
-    <p>
-      Developmental editing and manuscript consultation for fiction writers. 
-      Long-term client relationships built on direct, craft-focused feedback.
-    </p>
+    <figure class="piece">
+      <a class="tile" href="Envy%20Angle%20Spec.png" target="_blank" data-frame>
+        <img src="Envy%20Angle%20Spec.png" alt="ALT TEXT" loading="lazy">
+      </a>
+      <figcaption>(ENVY PROTOTYPE) Clean Lines for Toon Boom</figcaption>
+    </figure>
+
+    <figure class="piece">
+      <a class="tile" href="Envy%20Spec%202.png" target="_blank" data-frame>
+        <img src="Envy%20Spec%202.png" alt="ALT TEXT" loading="lazy">
+      </a>
+      <figcaption>(ENVY PROTOTYPE) Clean Lines for Toon Boom</figcaption>
+    </figure>
   </div>
 </section>
 
-<style>
-  .art-gallery {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-    gap: 16px;
-    padding: 16px;
-    max-width: 1200px;
-    margin: 0 auto;
-  }
-  .art-gallery figure {
-    margin: 0;
-  }
-  .art-gallery img {
-    width: 100%;
-    height: auto;
-    display: block;
-    border-radius: 4px;
-  }
-  .art-gallery figcaption {
-    font-size: 0.9rem;
-    margin-top: 6px;
-    color: #555;
-  }
-</style>
+<!-- ── WORK ── -->
+<section class="band split" id="work">
+  <h2 class="section-label">Current Work</h2>
 
-<div class="art-gallery">
-  <figure>
-    <a href="punkin.png" target="_blank">
-      <img src="punkin.png" alt="ALT TEXT" loading="lazy">
-    </a>
-    <figcaption>(OLD) COMIC PANEL</figcaption>
-  </figure>
+  <div class="entries">
+    <article class="entry">
+      <h3>Moonblood</h3>
+      <div class="genre">Upmarket Fiction &bull; Novel</div>
+      <p>
+        Olive Tarkanian is twenty, broke, and living in a rotting Fresno apartment
+        when her mother, Mabel, calls and says come home. Mabel is a force that bends
+        the world around her — brilliant, brutal, tender in flashes that make the cruelty
+        worse. When Olive tells her about the woman who groomed her online since she was
+        twelve, Mabel doesn't call a lawyer. She packs a bag, calls in favors from people
+        who owe her, and drives her daughter cross-country to settle it her way. What follows
+        strips both of them to the root — past the rage, past the protection that became its
+        own kind of violence, to a shared wound neither of them knows how to name.
+        <em>Moonblood</em> is about what lives between a mother and daughter when love and
+        violence share the same body.
+      </p>
+    </article>
 
-  <figure>
-    <a href="Mote Poster 2.0.jpg" target="_blank">
-      <img src="Mote Poster 2.0.jpg" alt="ALT TEXT" loading="lazy">
-    </a>
-    <figcaption>(NEW) MOTE FROM PSYCHOPUNK: GIRLBOSS GODHEAD</figcaption>
-  </figure>
+    <article class="entry featured">
+      <h3><span class="series">Psychopunk:</span> The Jellyfish Exorcist</h3>
+      <div class="genre">Speculative Fiction &bull; Novel</div>
+      <p>
+        Noviko Tanaka-LaCroix is a psychopunk — a wetware-assisted healer who dives into
+        the subconscious to clear out whatever's gone rotten. When a catatonic old man with
+        a bucket of live jellyfish and no language anyone can translate is dropped at her door
+        by a corporate agent, the job looks routine. It isn't. His mind is a centuries-deep
+        wound, his suffering is being maintained on purpose, and the corporations that run
+        Noviko's oceanic world can't agree on whether he should be healed or kept broken.
+        Now she's neck-deep in something much bigger than an exorcism, with her family at
+        stake and her sanity being spent like currency.
+      </p>
+    </article>
 
-  <figure>
-    <a href="I1P3.png" target="_blank">
-      <img src="I1P3.png" alt="ALT TEXT" loading="lazy">
-    </a>
-    <figcaption>(VERY OLD) COMIC COLORING</figcaption>
-  </figure>
+    <article class="entry featured">
+      <h3><span class="series">Psychopunk:</span> The Girlboss Godhead</h3>
+      <div class="genre">Speculative Fiction &bull; Novel</div>
+      <p>
+        Three hundred years after the solar flare that destroyed the tech empire of the
+        broligarchs, their freed slaves thrive in an anarchic, oceanic syndicate. All connect
+        through the wetware of a benevolent, chimeric entity masquerading as a corporation: PRISMA.
+        Envy, a genetically-engineered, centuries-old tablet kid turned bioweapon commando,
+        can't remember most of her life. As a living weapon and citizen of Syndicate, she is
+        voluntold to investigate potential eco-crime in the Pacific Northwest, her birthplace.
+        What she finds is a hungry, mind-enslaving plague with a grudge against her people.
+        Only with the help of a rogues' gallery of absurd characters will she survive in one
+        piece (or any number of pieces).
+      </p>
+    </article>
 
-   <figure>
-    <a href="Envy Angle Spec.png" target="_blank">
-      <img src="Envy Angle Spec.png" alt="ALT TEXT" loading="lazy">
-    </a>
-    <figcaption>(ENVY PROTOTYPE) Clean Lines for Toon Boom</figcaption>
-  </figure>
+    <article class="entry">
+      <h3>Jingle Bell and Too Much Christmas</h3>
+      <div class="genre">Children's Picture Book</div>
+      <p>
+        Jingle Bell runs Winter Wonderland with absolute sincerity and a smile that could
+        power a city grid. She loves Christmas so much she wants it every day — and when
+        spooky old Halloween won't get out of the way, Bell bulldozes right through. What
+        follows is a consumerist apocalypse in rhyming verse: children buried under toys,
+        parents worked to the bone to afford the gifts, grabby little opportunists, and a
+        world bleached by mandatory joy. A picture book about what happens when generosity
+        has no off switch, illustrated in the vein of DiTerlizzi and Froud, for kids who
+        can handle the dark and adults who've forgotten they need it.
+      </p>
+    </article>
 
-   <figure>
-    <a href="Envy Spec 2.png" target="_blank">
-      <img src="Envy Spec 2.png" alt="ALT TEXT" loading="lazy">
-    </a>
-    <figcaption>(ENVY PROTOTYPE) Clean Lines for Toon Boom</figcaption>
-  </figure>
-</div>
+    <article class="entry">
+      <h3>Feast of the Virgin Eagle</h3>
+      <div class="genre">Reconstruction-era Dark Fantasy - WIP, 100k+ words</div>
+      <p>
+      "If you write it, a curse on anyone who reads it." A warning ignored by Jeremy
+      Jordan, author of the collected diaries and transcribed interviews with his own
+      hellbound, adoptive mother. Sidney Jordan, murderer, outlaw, fallen woman passing
+      often as a man in her travels, has her 1870's adventures in America documented
+      by a son who, through the process of writing this book, opens up questions about
+      his own origins, and where his mother found him as a baby in the first place.
+      </p>
+
+      <p>
+      A death and a discovery lead to Sidney Jordan seeking Alva, her mother, across
+      the United States in a bid for answers -- while Alva sends Pinkertons, Templars,
+      and even an assassin-turned-friend to make attempts on Sidney's life. Along the
+      way, Sidney comes to face her true inheritance -- not silver, but hunger. This
+      hunger, for righteous bloodshed, the suffering of men she deems evil, for any
+      perceived justice, is her road to Hell.
+      </p>
+
+      <p>
+      The friends she makes along the way are Jeremiah Cain, legend of the Civil War
+      and killer of white slavers, and Lovey Sluder, an Appalachian-Cherokee bard who
+      sings to guard god's secrets. Together, they brave adventures across the Americas,
+      from New York to Memphis, Cape Horn and Los Angeles, San Francisco and at last,
+      Virginia City, the violent heart of Alva's empire of bloody silver.
+      </p>
+
+      <p>
+      What awaits them there is a promised feast, a great spoiling of their spirits,
+      a banquet laid out to rival the excesses of the old gods. In this tale, the
+      question of who eats, and who is eaten, is asked of the 19th century and beyond.
+      </p>
+    </article>
+
+    <article class="entry">
+      <h3>Editing &amp; Development</h3>
+      <div class="genre">Editorial Services</div>
+      <p>
+        Developmental editing and manuscript consultation for fiction writers.
+        Long-term client relationships built on direct, craft-focused feedback.
+      </p>
+    </article>
+  </div>
+</section>
+
 <!-- ── ABOUT ── -->
-<section id="about">
-  <div class="section-label">About</div>
+<section class="band split" id="about">
+  <h2 class="section-label">About</h2>
 
   <div class="bio">
     <p>
-      Talon Vale holds an MFA in fiction from Sierra Nevada College, 
-      where she studied under Patricia Smith, Alan Heathcock, 
-      Ben Percy, and Gayle Brandeis. She has been writing for fifteen years across 
+      Talon Vale holds an MFA in fiction from Sierra Nevada College,
+      where she studied under Patricia Smith, Alan Heathcock,
+      Ben Percy, and Gayle Brandeis. She has been writing for fifteen years across
       literary fiction, speculative fiction, essay, and poetry.
     </p>
     <p>
-      Short stories are published in both <em>Meat for Tea: The Valley Review</em> 
+      Short stories are published in both <em>Meat for Tea: The Valley Review</em>
       and <em>Artwife</em> magazines. Poetry has been featured in <em>Monkey Puzzle</em>.
     </p>
     <p>
-      Her work draws on Daoist philosophy, Gnostic and Western mystical traditions, 
-      and the deep structures of mythology. She reads upstream — studying the source 
+      Her work draws on Daoist philosophy, Gnostic and Western mystical traditions,
+      and the deep structures of mythology. She reads upstream — studying the source
       material that contemporary literature draws from.
     </p>
     <p>
-      She spent two years teaching in Zhengzhou, China, where she immersed herself 
-      in Mandarin and local culture — and where she met her wife. 
+      She spent two years teaching in Zhengzhou, China, where she immersed herself
+      in Mandarin and local culture — and where she met her wife.
       They live in Washington state.
     </p>
 
-    <div class="credentials">
-      <div class="credentials-grid">
-        <div class="credential-item">
-          <div class="label">Education</div>
-          <div class="value">MFA, Fiction — Sierra Nevada College</div>
-        </div>
-        <div class="credential-item">
-          <div class="label">Mentors</div>
-          <div class="value">Patricia Smith, Alan Heathcock, Ben Percy, Gayle Brandeis</div>
-        </div>
-        <div class="credential-item">
-          <div class="label">Practice</div>
-          <div class="value">Fear &amp; Wonder LLC</div>
-        </div>
-        <div class="credential-item">
-          <div class="label">Genres</div>
-          <div class="value">Literary Fiction, Speculative Fiction, Essay, Children's</div>
-        </div>
-        <div class="credential-item">
-          <div class="label">Published In</div>
-          <div class="value">Meat for Tea: The Valley Review, Artwife, Monkey Puzzle</div>
-        </div>
+    <dl class="credentials">
+      <div class="credential">
+        <dt>Education</dt>
+        <dd>MFA, Fiction — Sierra Nevada College</dd>
       </div>
+      <div class="credential">
+        <dt>Mentors</dt>
+        <dd>Patricia Smith, Alan Heathcock, Ben Percy, Gayle Brandeis</dd>
+      </div>
+      <div class="credential">
+        <dt>Practice</dt>
+        <dd>Fear &amp; Wonder LLC</dd>
+      </div>
+      <div class="credential">
+        <dt>Genres</dt>
+        <dd>Literary Fiction, Speculative Fiction, Essay, Children's</dd>
+      </div>
+      <div class="credential">
+        <dt>Published In</dt>
+        <dd>Meat for Tea: The Valley Review, Artwife, Monkey Puzzle</dd>
+      </div>
+    </dl>
+  </div>
+</section>
+
+<!-- ── TESTIMONIALS ── -->
+<section class="band split" id="praise">
+  <h2 class="section-label">Praise</h2>
+
+  <div class="praise-grid">
+    <div class="testimonial">
+      <blockquote>
+        "Talon is one of the most talented, dedicated, prolific students I've ever
+        worked with — creative energy radiates from her; it vibrates from every word
+        she writes. Some of her images will stay with me forever."
+      </blockquote>
+      <div class="attribution">Gayle Brandeis — PEN/Bellwether Prize-winning author</div>
+    </div>
+
+    <div class="testimonial">
+      <blockquote>
+        "Whenever I feel like not writing, I think to myself…
+        'Talon is probably writing right now.'"
+      </blockquote>
+      <div class="attribution">Alan Heathcock — author, mentor</div>
+    </div>
+
+    <div class="testimonial">
+      <blockquote>
+        "As a bestselling novelist and screenwriter, I recognize Talon's skill
+        and artistry as a professional colleague — a colleague I entrusted with
+        the difficult task of crafting a full-length, publishable, narrative memoir
+        for one of my clients. It was a project she excelled at."
+      </blockquote>
+      <div class="attribution">Chris Millis — novelist, screenwriter</div>
+    </div>
+
+    <div class="testimonial">
+      <blockquote>
+        "Honest, direct feedback is the single most valuable thing a writer can have,
+        and Talon consistently gives it to me."
+      </blockquote>
+      <div class="attribution">Nathaniel Flanders — long-term editing client</div>
     </div>
   </div>
 </section>
 
-</body>
-<!-- ── TESTIMONIALS ── -->
-<section id="praise">
-  <div class="section-label">Praise</div>
-
-  <div class="testimonial">
-    <blockquote>
-      "Talon is one of the most talented, dedicated, prolific students I've ever 
-      worked with — creative energy radiates from her; it vibrates from every word 
-      she writes. Some of her images will stay with me forever."
-    </blockquote>
-    <div class="attribution">Gayle Brandeis — PEN/Bellwether Prize-winning author</div>
-  </div>
-
-  <div class="testimonial">
-    <blockquote>
-      "Whenever I feel like not writing, I think to myself… 
-      'Talon is probably writing right now.'"
-    </blockquote>
-    <div class="attribution">Alan Heathcock — author, mentor</div>
-  </div>
-
-  <div class="testimonial">
-    <blockquote>
-      "As a bestselling novelist and screenwriter, I recognize Talon's skill 
-      and artistry as a professional colleague — a colleague I entrusted with 
-      the difficult task of crafting a full-length, publishable, narrative memoir 
-      for one of my clients. It was a project she excelled at."
-    </blockquote>
-    <div class="attribution">Chris Millis — novelist, screenwriter</div>
-  </div>
-
-  <div class="testimonial">
-    <blockquote>
-      "Honest, direct feedback is the single most valuable thing a writer can have, 
-      and Talon consistently gives it to me."
-    </blockquote>
-    <div class="attribution">Nathaniel Flanders — long-term editing client</div>
-  </div>
-</section>
-
 <!-- ── CONTACT ── -->
-<div class="contact-section" id="contact">
-  <div class="section-label">Contact</div>
+<section class="band contact" id="contact">
+  <h2 class="section-label">Contact</h2>
   <p>For professional inquiries or editorial services.</p>
   <a href="mailto:blair@fearandwonder.net" class="contact-link">blair@fearandwonder.net</a>
-</div>
+</section>
 
-<footer>
+</main>
+
+<footer class="site-footer">
   <p>&copy; 2026 Fear &amp; Wonder LLC</p>
 </footer>
-<style>
-  .art-gallery {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-    gap: 16px;
-    padding: 16px;
-    max-width: 1200px;
-    margin: 0 auto;
-  }
-  .art-gallery figure {
-    margin: 0;
-  }
-  .art-gallery img {
-    width: 100%;
-    height: auto;
-    display: block;
-    border-radius: 4px;
-  }
-  .art-gallery figcaption {
-    font-size: 0.9rem;
-    margin-top: 6px;
-    color: #555;
-  }
-</style>
 
+<!-- Full-size image viewer for the Art section -->
+<dialog class="viewer" aria-label="Image viewer">
+  <figure>
+    <img src="" alt="">
+    <figcaption>
+      <span class="viewer-caption"></span>
+      <span class="viewer-count"></span>
+    </figcaption>
+  </figure>
+  <button class="viewer-btn viewer-close" type="button" aria-label="Close">&times;</button>
+  <button class="viewer-btn viewer-prev" type="button" aria-label="Previous image">&lsaquo;</button>
+  <button class="viewer-btn viewer-next" type="button" aria-label="Next image">&rsaquo;</button>
+</dialog>
+
+<script>
+(() => {
+  // Placeholder with the file name wherever an image fails to load.
+  document.querySelectorAll('[data-frame] img').forEach((img) => {
+    const frame = img.closest('[data-frame]');
+    const fail = () => {
+      frame.classList.add('img-missing');
+      frame.dataset.missing = decodeURIComponent(img.getAttribute('src') || '');
+    };
+    if (img.complete && img.naturalWidth === 0 && img.getAttribute('src')) fail();
+    img.addEventListener('error', fail);
+  });
+
+  // Art viewer: click a piece to open it full size; arrows, swipe, Esc.
+  const viewer = document.querySelector('.viewer');
+  const tiles = [...document.querySelectorAll('.gallery .tile')];
+  if (!viewer || typeof viewer.showModal !== 'function' || !tiles.length) return;
+
+  const vImg = viewer.querySelector('img');
+  const vCap = viewer.querySelector('.viewer-caption');
+  const vCount = viewer.querySelector('.viewer-count');
+  let current = 0;
+  let swiped = false;
+
+  const show = (n) => {
+    current = (n + tiles.length) % tiles.length;
+    const tile = tiles[current];
+    const caption = tile.closest('figure').querySelector('figcaption');
+    vImg.src = tile.getAttribute('href');
+    vImg.alt = tile.querySelector('img').alt;
+    vCap.textContent = caption ? caption.textContent.trim() : '';
+    vCount.textContent = (current + 1) + ' / ' + tiles.length;
+  };
+
+  tiles.forEach((tile, n) => {
+    tile.addEventListener('click', (e) => {
+      e.preventDefault();
+      show(n);
+      viewer.showModal();
+    });
+  });
+
+  viewer.querySelector('.viewer-prev').addEventListener('click', () => show(current - 1));
+  viewer.querySelector('.viewer-next').addEventListener('click', () => show(current + 1));
+  viewer.querySelector('.viewer-close').addEventListener('click', () => viewer.close());
+
+  viewer.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowLeft') show(current - 1);
+    if (e.key === 'ArrowRight') show(current + 1);
+  });
+
+  viewer.addEventListener('click', (e) => {
+    if (swiped) { swiped = false; return; }
+    if (e.target === viewer) viewer.close();
+  });
+
+  let startX = null;
+  viewer.addEventListener('pointerdown', (e) => { startX = e.clientX; });
+  viewer.addEventListener('pointerup', (e) => {
+    if (startX === null) return;
+    const dx = e.clientX - startX;
+    startX = null;
+    if (Math.abs(dx) > 50) {
+      swiped = true;
+      show(current + (dx < 0 ? 1 : -1));
+    }
+  });
+
+  viewer.addEventListener('close', () => tiles[current].focus());
+})();
+</script>
+
+</body>
 </html>
